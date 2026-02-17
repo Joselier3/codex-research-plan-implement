@@ -81,7 +81,7 @@ To continue this work:
 
 1. **Load context:**
    ```
-   /6_resume_work thoughts/shared/sessions/2025-01-06_auth_refactor.md
+   $resume-work thoughts/shared/sessions/2025-01-06_auth_refactor.md
    ```
 
 2. **Check plan progress:**

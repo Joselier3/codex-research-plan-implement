@@ -1,12 +1,12 @@
 #!/bin/bash
 
-# Claude Code Research-Plan-Implement Framework Setup Script
+# Codex Research-Plan-Implement Framework Setup Script
 # This script helps you adopt the framework in your repository
 
 set -e
 
-echo "🚀 Claude Code Framework Setup"
-echo "================================"
+echo "🚀 Codex Framework Setup"
+echo "========================="
 echo ""
 
 # Get target directory
@@ -22,13 +22,13 @@ if [ ! -d "$TARGET_DIR" ]; then
     exit 1
 fi
 
-# Check if .claude already exists
-if [ -d "$TARGET_DIR/.claude" ]; then
-    echo "ℹ️  .claude directory already exists in $TARGET_DIR"
+# Check if .agents already exists
+if [ -d "$TARGET_DIR/.agents" ]; then
+    echo "ℹ️  .agents directory already exists in $TARGET_DIR"
 
-    # Check for existing commands and agents
-    if [ -d "$TARGET_DIR/.claude/commands" ] || [ -d "$TARGET_DIR/.claude/agents" ]; then
-        echo "📦 Found existing framework installation"
+    # Check for existing skills
+    if [ -d "$TARGET_DIR/.agents/skills" ]; then
+        echo "📦 Found existing Codex skills"
         echo ""
         echo "What would you like to do?"
         echo "1) Update framework (overwrite with latest versions)"
@@ -52,8 +52,8 @@ if [ -d "$TARGET_DIR/.claude" ]; then
         esac
     fi
 else
-    # Create .claude if it doesn't exist
-    mkdir -p "$TARGET_DIR/.claude"
+    # Create .agents if it doesn't exist
+    mkdir -p "$TARGET_DIR/.agents"
     UPDATE_MODE="false"
 fi
 
@@ -71,50 +71,42 @@ echo ""
 echo "📁 Creating directory structure..."
 
 # Create directories if they don't exist
-mkdir -p "$TARGET_DIR/.claude/agents"
-mkdir -p "$TARGET_DIR/.claude/commands"
+mkdir -p "$TARGET_DIR/.agents/skills"
 mkdir -p "$TARGET_DIR/thoughts/shared/research"
 mkdir -p "$TARGET_DIR/thoughts/shared/plans"
 mkdir -p "$TARGET_DIR/thoughts/shared/sessions"
 mkdir -p "$TARGET_DIR/thoughts/shared/cloud"
 
+# Optional .codex folder (local environments/actions)
+mkdir -p "$TARGET_DIR/.codex"
+
 echo "📝 Copying framework files..."
 
-# Copy commands - handle update vs skip mode
-echo "  Installing commands..."
-for cmd_file in .claude/commands/*.md; do
-    filename=$(basename "$cmd_file")
-    if [ -f "$TARGET_DIR/.claude/commands/$filename" ]; then
+# Copy skills - handle update vs skip mode
+echo "  Installing skills..."
+for skill_dir in .agents/skills/*; do
+    skill_name=$(basename "$skill_dir")
+    target_path="$TARGET_DIR/.agents/skills/$skill_name"
+
+    if [ -d "$target_path" ]; then
         if [ "$UPDATE_MODE" = "true" ]; then
-            # In update mode, overwrite existing files
-            cp "$cmd_file" "$TARGET_DIR/.claude/commands/"
-            echo "    🔄 Updated $filename"
+            rm -rf "$target_path"
+            cp -r "$skill_dir" "$target_path"
+            echo "    🔄 Updated $skill_name"
         else
-            echo "    ⚠️  $filename already exists, skipping..."
+            echo "    ⚠️  $skill_name already exists, skipping..."
         fi
     else
-        cp "$cmd_file" "$TARGET_DIR/.claude/commands/"
-        echo "    ✅ Installed $filename"
+        cp -r "$skill_dir" "$target_path"
+        echo "    ✅ Installed $skill_name"
     fi
 done
 
-# Copy agents - handle update vs skip mode
-echo "  Installing agents..."
-for agent_file in .claude/agents/*.md; do
-    filename=$(basename "$agent_file")
-    if [ -f "$TARGET_DIR/.claude/agents/$filename" ]; then
-        if [ "$UPDATE_MODE" = "true" ]; then
-            # In update mode, overwrite existing files
-            cp "$agent_file" "$TARGET_DIR/.claude/agents/"
-            echo "    🔄 Updated $filename"
-        else
-            echo "    ⚠️  $filename already exists, skipping..."
-        fi
-    else
-        cp "$agent_file" "$TARGET_DIR/.claude/agents/"
-        echo "    ✅ Installed $filename"
-    fi
-done
+# Copy .codex README if missing
+if [ -f ".codex/README.md" ] && [ ! -f "$TARGET_DIR/.codex/README.md" ]; then
+    cp .codex/README.md "$TARGET_DIR/.codex/"
+    echo "  ✅ Installed .codex/README.md"
+fi
 
 # Copy playbook if it doesn't exist or ask to update
 if [ -f "$TARGET_DIR/PLAYBOOK.md" ]; then
@@ -131,50 +123,28 @@ else
     echo "✅ Installed PLAYBOOK.md"
 fi
 
-# Check if CLAUDE.md exists and offer to append framework section
-if [ -f "$TARGET_DIR/CLAUDE.md" ]; then
+# Install AGENTS.md
+if [ -f "$TARGET_DIR/AGENTS.md" ]; then
     echo ""
-    echo "📝 CLAUDE.md Configuration"
-    echo "=========================="
-    echo ""
-    echo "CLAUDE.md already exists in the target repository."
-    read -p "Would you like to append a section about the Research-Plan-Implement framework commands? (y/N): " APPEND_CLAUDE
-
-    if [ "$APPEND_CLAUDE" = "y" ] || [ "$APPEND_CLAUDE" = "Y" ]; then
-        echo "" >> "$TARGET_DIR/CLAUDE.md"
-        echo "## Research-Plan-Implement Framework" >> "$TARGET_DIR/CLAUDE.md"
-        echo "" >> "$TARGET_DIR/CLAUDE.md"
-        echo "This repository uses the Research-Plan-Implement framework with the following workflow commands:" >> "$TARGET_DIR/CLAUDE.md"
-        echo "" >> "$TARGET_DIR/CLAUDE.md"
-        echo "1. \`/1_research_codebase\` - Deep codebase exploration with parallel AI agents" >> "$TARGET_DIR/CLAUDE.md"
-        echo "2. \`/2_create_plan\` - Create detailed, phased implementation plans" >> "$TARGET_DIR/CLAUDE.md"
-        echo "3. \`/3_validate_plan\` - Verify implementation matches plan" >> "$TARGET_DIR/CLAUDE.md"
-        echo "4. \`/4_implement_plan\` - Execute plan systematically" >> "$TARGET_DIR/CLAUDE.md"
-        echo "5. \`/5_save_progress\` - Save work session state" >> "$TARGET_DIR/CLAUDE.md"
-        echo "6. \`/6_resume_work\` - Resume from saved session" >> "$TARGET_DIR/CLAUDE.md"
-        echo "7. \`/7_research_cloud\` - Analyze cloud infrastructure (READ-ONLY)" >> "$TARGET_DIR/CLAUDE.md"
-        echo "" >> "$TARGET_DIR/CLAUDE.md"
-        echo "Research findings are saved in \`thoughts/shared/research/\`" >> "$TARGET_DIR/CLAUDE.md"
-        echo "Implementation plans are saved in \`thoughts/shared/plans/\`" >> "$TARGET_DIR/CLAUDE.md"
-        echo "Session summaries are saved in \`thoughts/shared/sessions/\`" >> "$TARGET_DIR/CLAUDE.md"
-        echo "Cloud analyses are saved in \`thoughts/shared/cloud/\`" >> "$TARGET_DIR/CLAUDE.md"
-        echo "✅ Appended framework section to CLAUDE.md"
+    read -p "AGENTS.md already exists. Update it? (y/N): " UPDATE_AGENTS
+    if [ "$UPDATE_AGENTS" = "y" ] || [ "$UPDATE_AGENTS" = "Y" ]; then
+        cp AGENTS.md "$TARGET_DIR/"
+        echo "✅ Updated AGENTS.md"
     else
-        echo "ℹ️  Skipping CLAUDE.md modification"
+        echo "ℹ️  Kept existing AGENTS.md"
     fi
 else
-    echo ""
-    echo "ℹ️  No CLAUDE.md found in target repository."
-    echo "    Consider creating one to provide Claude Code with project-specific guidance."
+    cp AGENTS.md "$TARGET_DIR/"
+    echo "✅ Installed AGENTS.md"
 fi
 
-# Create a sample research template
+# Create sample templates
 echo "📚 Creating sample templates..."
 
 cat > "$TARGET_DIR/thoughts/shared/research/TEMPLATE.md" << 'EOF'
 ---
 date: YYYY-MM-DD HH:MM:SS
-researcher: Claude
+researcher: Codex
 topic: "Research Topic"
 tags: [research, codebase]
 status: complete
@@ -230,20 +200,16 @@ EOF
 echo ""
 if [ "$UPDATE_MODE" = "true" ]; then
     echo "🎉 Framework Updated Successfully!"
-    echo "===================================="
+    echo "================================="
     echo ""
     echo "Framework updated in: $TARGET_DIR"
     echo ""
     echo "📋 Update Summary:"
-    echo "- Commands and agents updated to latest versions"
+    echo "- Skills updated to latest versions"
     echo "- Your research documents and plans are preserved"
     echo ""
     echo "💡 To revert changes:"
-    echo "- Use git: 'git checkout -- .claude/'"
-    echo ""
-    echo "📖 To update framework in the future:"
-    echo "- Run: ./setup.sh $TARGET_DIR"
-    echo "- Choose option 1 (Update framework)"
+    echo "- Use git: 'git checkout -- .agents/skills/'"
 else
     echo "🎉 Setup Complete!"
     echo "=================="
@@ -253,23 +219,20 @@ else
     echo "📖 Next Steps:"
     echo "1. Review $TARGET_DIR/PLAYBOOK.md for usage instructions"
     echo "2. Try the workflow with a simple task:"
-    echo "   - /1_research_codebase"
-    echo "   - /2_create_plan"
-    echo "   - /4_implement_plan"
-    if [ "$APPEND_CLAUDE" = "y" ] || [ "$APPEND_CLAUDE" = "Y" ]; then
-        echo "3. Framework commands have been added to your CLAUDE.md"
-    fi
+    echo "   - \$research-codebase"
+    echo "   - \$create-plan"
+    echo "   - \$implement-plan"
     echo ""
     echo "💡 Tips:"
-    echo "- Commands are numbered to show the typical flow"
+    echo "- Skills are invoked with $skill-name in Codex"
     echo "- Research documents accumulate in thoughts/shared/research/"
     echo "- Plans serve as technical specifications"
-    echo "- Use parallel agents for faster research"
-    echo "- Use git to track and manage framework changes"
+    echo "- Use helper skills for faster research"
     echo ""
     echo "🔄 To update framework in the future:"
     echo "- Run: ./setup.sh $TARGET_DIR"
     echo "- Choose option 1 (Update framework)"
 fi
+
 echo ""
 echo "Happy coding! 🚀"
