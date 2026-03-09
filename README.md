@@ -31,7 +31,8 @@ codex-research-plan-implement/
 │       ├── define-test-cases/
 │       ├── codebase-locator/
 │       ├── codebase-analyzer/
-│       └── codebase-pattern-finder/
+│       ├── codebase-pattern-finder/
+│       └── compact-chat/
 ├── thoughts/                   # Context storage
 │   └── shared/
 │       ├── research/
@@ -56,6 +57,7 @@ Invoke skills from Codex using `$skill-name` in the CLI/IDE/app.
 6. **$resume-work** — Resume from a session summary
 7. **$research-cloud** — READ-ONLY cloud analysis
 8. **$define-test-cases** — Comment-first test cases
+9. **$compact-chat** — Write compact session progress notes
 
 Helper skills:
 - **$codebase-locator** — Find relevant files

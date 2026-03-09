@@ -18,6 +18,7 @@ Use these skills in the Codex app/CLI/IDE:
 6. `$resume-work` — Resume from saved session
 7. `$research-cloud` — READ-ONLY cloud analysis
 8. `$define-test-cases` — Comment-first acceptance tests
+9. `$compact-chat` — Write compact session progress notes
 
 Helper skills:
 - `$codebase-locator`

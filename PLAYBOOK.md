@@ -170,6 +170,7 @@ repo/
 - **$resume-work** — Resume a saved session
 - **$research-cloud** — READ-ONLY cloud analysis
 - **$define-test-cases** — Comment-first acceptance tests
+- **$compact-chat** — Write compact session progress notes
 
 ## Session Management
 
